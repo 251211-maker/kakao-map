@@ -5,113 +5,70 @@
     <title>몽글몽글 장소 검색</title>
     <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* 기본 스타일 설정 */
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Gaegu', cursive; background-color: #fff9e6; }
-        .container { display: flex; width: 100%; height: 100vh; padding: 10px; box-sizing: border-box; gap: 10px; }
+        .container { display: flex; width: 100%; height: 100vh; padding: 10px; box-sizing: border-box; gap: 15px; }
 
-        /* 왼쪽 검색창 영역: 둥근 모서리와 그림자 */
         #menu_wrap { 
-            width: 320px; 
-            padding: 20px; 
-            background: #ffffff; 
-            border-radius: 20px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            width: 320px; padding: 20px; background: #ffffff; border-radius: 25px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; 
         }
 
-        /* 오른쪽 지도 영역: 둥근 모서리 */
-        #map { 
-            flex: 1; 
-            height: 100%; 
-            border-radius: 20px; 
-            border: 4px solid white;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
+        #map { flex: 1; height: 100%; border-radius: 25px; border: 6px solid white; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
 
-        h2 { font-size: 1.8rem; color: #ff9d00; text-align: center; margin-top: 0; margin-bottom: 20px; }
+        h2 { font-size: 1.8rem; color: #ff9d00; text-align: center; margin: 0 0 20px 0; }
         
-        /* 입력창 디자인 */
-        .search_box { display: flex; gap: 5px; margin-bottom: 20px; }
+        .search_box { display: flex; gap: 8px; margin-bottom: 20px; }
         input { 
-            flex: 1;
-            padding: 12px; 
-            border: 2px solid #ffeaa7; 
-            border-radius: 12px; 
-            outline: none;
-            font-family: 'Gaegu', cursive;
-            font-size: 1.1rem;
+            flex: 1; padding: 12px; border: 2px solid #ffeaa7; border-radius: 15px; 
+            outline: none; font-family: 'Gaegu', cursive; font-size: 1.2rem;
         }
-        input:focus { border-color: #fdcb6e; }
-
         button { 
-            padding: 10px 15px; 
-            cursor: pointer; 
-            background: #fdcb6e; 
-            border: none; 
-            border-radius: 12px;
-            font-weight: bold; 
-            color: white;
-            transition: transform 0.2s;
+            padding: 10px 20px; cursor: pointer; background: #fdcb6e; border: none; 
+            border-radius: 15px; color: white; font-weight: bold; font-size: 1.1rem;
         }
-        button:hover { transform: scale(1.05); background: #fab1a0; }
 
-        /* 리스트 디자인 */
-        #placesList { 
-            list-style: none; 
-            padding: 0; 
-            margin: 0; 
-            overflow-y: auto; 
-            flex: 1;
-        }
+        #placesList { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex: 1; }
         #placesList li { 
-            padding: 15px; 
-            background: #fffdf5; 
-            margin-bottom: 10px; 
-            border-radius: 15px; 
-            border: 1px solid #fff3cd;
-            transition: all 0.3s ease;
-            cursor: pointer;
+            padding: 15px; background: #fffdf5; margin-bottom: 12px; border-radius: 20px; 
+            border: 2px solid #fff3cd; transition: all 0.2s ease-in-out; cursor: pointer;
         }
-        #placesList li:hover { 
-            background: #ffeaa7; 
-            transform: translateY(-3px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        #placesList li strong { color: #e67e22; font-size: 1.2rem; display: block; margin-bottom: 4px; }
-        #placesList li span { color: #95a5a6; font-size: 0.9rem; }
+        #placesList li:hover { background: #ffeaa7; transform: scale(1.02); }
+        #placesList li strong { color: #e67e22; font-size: 1.3rem; display: block; }
+        #placesList li span { color: #95a5a6; font-size: 1rem; }
 
-        /* 스크롤바 커스텀 */
-        #placesList::-webkit-scrollbar { width: 6px; }
-        #placesList::-webkit-scrollbar-thumb { background: #ffeaa7; border-radius: 10px; }
+        /* 커스텀 오버레이 디자인 */
+        .customoverlay {
+            position: relative; bottom: 55px; border-radius: 15px; border: 2px solid #fdcb6e; 
+            background: #fff; padding: 5px 10px; font-size: 14px; font-weight: bold; color: #d35400;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .customoverlay:after {
+            content: ''; position: absolute; margin-left: -10px; left: 50%; bottom: -10px;
+            width: 0; height: 0; border-top: 10px solid #fdcb6e; border-left: 10px solid transparent; border-right: 10px solid transparent;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="menu_wrap">
-        <h2>🐾 어디로 갈까요?</h2>
+        <h2>🐾 몽글 몽글 검색</h2>
         <form onsubmit="searchPlaces(); return false;" class="search_box">
-            <input type="text" value="학교" id="keyword" placeholder="장소를 적어주세요!">
+            <input type="text" value="카페" id="keyword" placeholder="어디가 궁금해?">
             <button type="submit">찾기</button>
         </form>
         <ul id="placesList"></ul>
     </div>
-
     <div id="map"></div>
 </div>
 
 <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=812e888a788f00bb238aabf1e311cc38&libraries=services"></script>
 
 <script>
-// --- JavaScript는 기존 로직을 유지하며 마커와 리스트 연결성을 강화 ---
 var markers = [];
+var overlays = []; // 커스텀 오버레이를 담을 배열
 var mapContainer = document.getElementById('map'), 
-    mapOption = { 
-        center: new kakao.maps.LatLng(37.66, 126.83), 
-        level: 5 
-    }; 
+    mapOption = { center: new kakao.maps.LatLng(37.66, 126.83), level: 4 }; 
 
 var map = new kakao.maps.Map(mapContainer, mapOption);
 var ps = new kakao.maps.services.Places(); 
@@ -119,7 +76,7 @@ var ps = new kakao.maps.services.Places();
 function searchPlaces() {
     var keyword = document.getElementById('keyword').value;
     if (!keyword.replace(/^\s+|\s+$/g, '')) {
-        alert('이름을 입력해주세요! 멍멍!');
+        alert('검색어를 입력해줘! 왈!');
         return false;
     }
     ps.keywordSearch(keyword, placesSearchCB); 
@@ -128,10 +85,8 @@ function searchPlaces() {
 function placesSearchCB(data, status, pagination) {
     if (status === kakao.maps.services.Status.OK) {
         displayPlaces(data);
-    } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
-        alert('앗, 검색 결과가 없어요! 다시 시도해볼까요?');
-    } else if (status === kakao.maps.services.Status.ERROR) {
-        alert('오류가 발생했어요. 다시 해봐요!');
+    } else {
+        alert('앗! 검색 결과가 없어 ㅠ_ㅠ');
     }
 }
 
@@ -140,44 +95,66 @@ function displayPlaces(places) {
         bounds = new kakao.maps.LatLngBounds();
     
     listEl.innerHTML = '';
-    removeMarker(); // 기존 마커 제거
+    removeMarker(); 
+
+    // 귀여운 마커 이미지 설정 (발바닥 모양 이미지 링크)
+    var imageSrc = 'https://cdn-icons-png.flaticon.com/512/1077/1077163.png', 
+        imageSize = new kakao.maps.Size(40, 40), 
+        markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
 
     for (var i=0; i<places.length; i++) {
         var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x);
-        var marker = addMarker(placePosition);
+        
+        // 마커 생성
+        var marker = new kakao.maps.Marker({
+            position: placePosition,
+            image: markerImage
+        });
+        marker.setMap(map);
+        markers.push(marker);
+
+        // 커스텀 오버레이 (말풍선) 생성
+        var content = '<div class="customoverlay">' + places[i].place_name + '</div>';
+        var overlay = new kakao.maps.CustomOverlay({
+            content: content,
+            position: placePosition
+        });
 
         bounds.extend(placePosition);
 
-        // 리스트 아이템 생성
+        // 리스트 아이템 및 이벤트 처리
         var itemEl = document.createElement('li');
         itemEl.innerHTML = '<strong>' + places[i].place_name + '</strong><span>' + places[i].address_name + '</span>';
         
-        // 클릭 시 지도를 해당 위치로 이동시키는 이벤트 추가
-        (function(marker, title, pos) {
+        (function(m, o, p) {
             itemEl.onclick = function() {
-                map.panTo(pos);
+                closeAllOverlays();
+                o.setMap(map);
+                map.panTo(p);
             };
-        })(marker, places[i].place_name, placePosition);
+            kakao.maps.event.addListener(m, 'click', function() {
+                closeAllOverlays();
+                o.setMap(map);
+            });
+        })(marker, overlay, placePosition);
 
+        overlays.push(overlay);
         listEl.appendChild(itemEl);
     }
     map.setBounds(bounds);
 }
 
-function addMarker(position) {
-    var marker = new kakao.maps.Marker({
-        position: position
-    });
-    marker.setMap(map);
-    markers.push(marker);
-    return marker;
+function closeAllOverlays() {
+    for (var i = 0; i < overlays.length; i++) {
+        overlays[i].setMap(null);
+    }
 }
 
 function removeMarker() {
-    for ( var i = 0; i < markers.length; i++ ) {
-        markers[i].setMap(null);
-    }   
+    for (var i = 0; i < markers.length; i++) markers[i].setMap(null);
     markers = [];
+    closeAllOverlays();
+    overlays = [];
 }
 </script>
 </body>
