@@ -2,14 +2,17 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>몽글몽글 장소 검색</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Map</title>
     <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Jua&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
 
         body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
             font-family: 'Gaegu', cursive;
             background:
                 radial-gradient(circle at 8% 12%, rgba(255, 206, 226, 0.75) 0 70px, transparent 72px),
@@ -20,95 +23,99 @@
         }
 
         .container {
-            display: flex; width: 100%; height: 100vh;
-            padding: 18px; gap: 18px; position: relative;
-        }
-
-        .container::before {
-            content: '✦  ♡  ✿  ✦  ♡  ✿';
-            position: absolute; top: 10px; right: 34px;
-            color: rgba(255, 154, 191, 0.45);
-            font-size: 28px; letter-spacing: 12px; pointer-events: none;
+            display: grid;
+            grid-template-columns: 410px 1fr;
+            width: 100%;
+            height: 100vh;
+            padding: 18px;
+            gap: 18px;
         }
 
         #menu_wrap {
-            width: 390px; padding: 22px;
-            background: rgba(255, 255, 255, 0.86);
+            padding: 22px;
+            background: rgba(255, 255, 255, 0.88);
             border: 3px solid rgba(255, 255, 255, 0.95);
             border-radius: 34px;
             box-shadow: 0 18px 38px rgba(255, 162, 189, 0.24), 0 8px 18px rgba(108, 86, 64, 0.08);
-            display: flex; flex-direction: column; overflow: hidden;
-            backdrop-filter: blur(12px); position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
         }
 
-        #menu_wrap::after {
-            content: ''; position: absolute; width: 88px; height: 88px;
-            right: -22px; top: -24px;
-            background: radial-gradient(circle, #ffd6e5 0 45%, transparent 47%);
-            opacity: 0.8;
+        .title_box {
+            text-align: center;
+            margin-bottom: 14px;
         }
-
-        .title_box { text-align: center; margin-bottom: 16px; position: relative; z-index: 1; }
 
         h2 {
-            font-family: 'Jua', sans-serif; font-size: 2rem;
-            color: #ff7aa8; margin: 0; text-shadow: 0 3px 0 #fff0a8;
+            font-family: 'Jua', sans-serif;
+            font-size: 2rem;
+            color: #ff7aa8;
+            margin: 0;
+            text-shadow: 0 3px 0 #fff0a8;
         }
 
-        .subtitle { margin-top: 7px; color: #9b8a7d; font-size: 1.08rem; }
+        .subtitle {
+            margin-top: 7px;
+            color: #9b8a7d;
+            font-size: 1.08rem;
+        }
 
         .theme_panel {
-            position: relative; z-index: 1;
             padding: 13px;
             border-radius: 24px;
-            background: rgba(255, 249, 219, 0.86);
+            background: rgba(255, 249, 219, 0.9);
             border: 2px dashed #ffc4d8;
             margin-bottom: 12px;
         }
 
-        .theme_row {
+        .theme_row, .add_theme_box {
             display: flex;
             gap: 8px;
-            margin-bottom: 9px;
+        }
+
+        .add_theme_box {
+            margin-top: 9px;
         }
 
         select, input {
-            min-width: 0; padding: 12px 13px; border: 0;
-            border-radius: 17px; outline: none; font-family: 'Gaegu', cursive;
-            font-size: 1.14rem; color: #6f5a4a; background: #ffffff;
+            min-width: 0;
+            padding: 12px 13px;
+            border: 0;
+            border-radius: 17px;
+            outline: none;
+            font-family: 'Gaegu', cursive;
+            font-size: 1.14rem;
+            color: #6f5a4a;
+            background: #ffffff;
             box-shadow: inset 0 2px 7px rgba(255, 191, 213, 0.2);
         }
 
         select { width: 42%; cursor: pointer; }
         input { flex: 1; }
-        input::placeholder { color: #c2aaa0; }
-
-        .search_box {
-            display: flex; gap: 9px; margin-bottom: 0;
-        }
 
         button {
-            padding: 10px 16px; cursor: pointer;
+            padding: 10px 16px;
+            cursor: pointer;
             background: linear-gradient(135deg, #ff86b5, #ffb35c);
-            border: none; border-radius: 17px; color: white;
-            font-family: 'Jua', sans-serif; font-size: 1.02rem;
+            border: none;
+            border-radius: 17px;
+            color: white;
+            font-family: 'Jua', sans-serif;
+            font-size: 1.02rem;
             box-shadow: 0 7px 0 #e86f8f, 0 12px 18px rgba(255, 127, 172, 0.22);
-            transition: transform 0.18s ease, box-shadow 0.18s ease;
             white-space: nowrap;
         }
 
-        button:hover { transform: translateY(-2px); box-shadow: 0 9px 0 #e86f8f, 0 15px 22px rgba(255, 127, 172, 0.28); }
-        button:active { transform: translateY(4px); box-shadow: 0 3px 0 #e86f8f, 0 7px 12px rgba(255, 127, 172, 0.18); }
-
-        .add_theme_box {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
+        button:active {
+            transform: translateY(4px);
+            box-shadow: 0 3px 0 #e86f8f;
         }
 
         .add_theme_box button {
             background: linear-gradient(135deg, #8fcfff, #b99cff);
-            box-shadow: 0 7px 0 #7d91de, 0 12px 18px rgba(127, 159, 255, 0.18);
+            box-shadow: 0 7px 0 #7d91de;
         }
 
         .theme_hint {
@@ -119,54 +126,78 @@
         }
 
         .section_title {
-            display: flex; align-items: center; justify-content: space-between;
-            margin: 8px 2px 9px; color: #f26b9b;
-            font-family: 'Jua', sans-serif; font-size: 1.18rem; position: relative; z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            margin: 9px 2px;
+            color: #f26b9b;
+            font-family: 'Jua', sans-serif;
+            font-size: 1.18rem;
         }
 
-        .mini_note { font-family: 'Gaegu', cursive; color: #a7958d; font-size: 0.96rem; }
+        .mini_note {
+            font-family: 'Gaegu', cursive;
+            color: #a7958d;
+            font-size: 0.96rem;
+        }
 
         #placesList, #favoriteList {
-            list-style: none; padding: 3px 2px 2px; margin: 0;
-            overflow-y: auto; scrollbar-width: thin; scrollbar-color: #ffc1d8 transparent;
-            position: relative; z-index: 1;
+            list-style: none;
+            padding: 3px 2px 2px;
+            margin: 0;
+            overflow-y: auto;
         }
 
         #placesList { flex: 1.05; min-height: 150px; }
         #favoriteList { flex: 0.85; min-height: 120px; }
 
-        #placesList::-webkit-scrollbar, #favoriteList::-webkit-scrollbar { width: 8px; }
-        #placesList::-webkit-scrollbar-thumb, #favoriteList::-webkit-scrollbar-thumb { background: #ffc1d8; border-radius: 99px; }
-
         #placesList li, #favoriteList li {
             padding: 15px 16px 14px 18px;
             background: linear-gradient(135deg, #ffffff 0%, #fff9fb 100%);
-            margin-bottom: 13px; border-radius: 24px; border: 2px solid #ffe4ec;
+            margin-bottom: 13px;
+            border-radius: 24px;
+            border: 2px solid #ffe4ec;
             box-shadow: 0 9px 18px rgba(255, 176, 203, 0.14);
-            transition: all 0.2s ease-in-out; cursor: pointer; position: relative; overflow: hidden;
-        }
-
-        #placesList li::before { content: '📍'; position: absolute; right: 15px; top: 12px; font-size: 1.3rem; opacity: 0.72; }
-        #favoriteList li::before { content: '💗'; position: absolute; right: 15px; top: 12px; font-size: 1.25rem; opacity: 0.78; }
-
-        #placesList li::after, #favoriteList li::after {
-            content: ''; position: absolute; width: 48px; height: 48px;
-            right: -18px; bottom: -18px; border-radius: 50%; background: rgba(255, 238, 153, 0.62);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
 
         #placesList li:hover, #favoriteList li:hover {
             background: linear-gradient(135deg, #fff7bd 0%, #ffe4ef 100%);
-            transform: translateY(-3px) scale(1.015); border-color: #ffc0d6;
+            transform: translateY(-3px) scale(1.015);
+            border-color: #ffc0d6;
+        }
+
+        #placesList li::before {
+            content: '📍';
+            position: absolute;
+            right: 15px;
+            top: 12px;
+            font-size: 1.3rem;
+        }
+
+        #favoriteList li::before {
+            content: '💗';
+            position: absolute;
+            right: 15px;
+            top: 12px;
+            font-size: 1.25rem;
         }
 
         #placesList li strong, #favoriteList li strong {
-            color: #f26b9b; font-size: 1.28rem; display: block;
-            padding-right: 28px; line-height: 1.25;
-            font-family: 'Jua', sans-serif; font-weight: 400;
+            color: #f26b9b;
+            font-size: 1.28rem;
+            display: block;
+            padding-right: 30px;
+            font-family: 'Jua', sans-serif;
+            font-weight: 400;
         }
 
         #placesList li span, #favoriteList li span {
-            color: #8f8a85; font-size: 1rem; display: block; margin-top: 5px; line-height: 1.25;
+            color: #8f8a85;
+            font-size: 1rem;
+            display: block;
+            margin-top: 5px;
         }
 
         .favorite_actions {
@@ -178,49 +209,94 @@
         }
 
         .small_badge, .delete_btn {
-            display: inline-block; padding: 4px 9px;
-            border-radius: 999px; font-size: 0.95rem;
+            display: inline-block;
+            padding: 4px 9px;
+            border-radius: 999px;
+            font-size: 0.95rem;
             border: 1px solid #ffc7da;
         }
 
-        .small_badge { background: #fff0f5; color: #e65b8b; }
-        .delete_btn { background: #fff; color: #9b8a7d; cursor: pointer; }
-        .delete_btn:hover { background: #ffe1eb; color: #e65b8b; }
+        .small_badge {
+            background: #fff0f5;
+            color: #e65b8b;
+        }
+
+        .delete_btn {
+            background: #fff;
+            color: #9b8a7d;
+            cursor: pointer;
+        }
+
+        .delete_btn:hover {
+            background: #ffe1eb;
+            color: #e65b8b;
+        }
 
         .empty_hint {
-            padding: 12px; text-align: center; color: #b59a8d;
-            background: rgba(255, 255, 255, 0.55); border-radius: 20px;
-            border: 1px solid rgba(255, 196, 216, 0.55); font-size: 1.02rem;
-            margin: 2px 0 12px; position: relative; z-index: 1;
+            padding: 12px;
+            text-align: center;
+            color: #b59a8d;
+            background: rgba(255, 255, 255, 0.55);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 196, 216, 0.55);
+            font-size: 1.02rem;
+            margin: 2px 0 12px;
         }
 
         #map {
-            flex: 1; height: 100%; border-radius: 34px;
+            width: 100%;
+            height: 100%;
+            border-radius: 34px;
             border: 8px solid rgba(255, 255, 255, 0.96);
             box-shadow: 0 18px 38px rgba(108, 86, 64, 0.13), 0 8px 20px rgba(255, 159, 196, 0.18);
             overflow: hidden;
         }
 
         .customoverlay {
-            position: relative; bottom: 58px; border-radius: 20px;
-            border: 2px solid #ff9bc0; background: #fff; padding: 8px 13px 7px;
-            font-size: 15px; font-family: 'Jua', sans-serif; color: #f05f96;
+            position: relative;
+            bottom: 58px;
+            border-radius: 20px;
+            border: 2px solid #ff9bc0;
+            background: #fff;
+            padding: 8px 13px 7px;
+            font-size: 15px;
+            font-family: 'Jua', sans-serif;
+            color: #f05f96;
             box-shadow: 0 8px 17px rgba(255, 138, 181, 0.22);
-            white-space: nowrap; cursor: pointer; user-select: none;
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
         }
 
-        .customoverlay::before { content: '♡'; margin-right: 5px; color: #ffb84d; }
-        .customoverlay:hover { background: #fff4ba; transform: translateY(-2px); }
+        .customoverlay::before {
+            content: '♡';
+            margin-right: 5px;
+            color: #ffb84d;
+        }
+
+        .customoverlay:hover {
+            background: #fff4ba;
+        }
+
         .customoverlay:after {
-            content: ''; position: absolute; margin-left: -9px; left: 50%; bottom: -10px;
-            width: 0; height: 0; border-top: 10px solid #ff9bc0;
-            border-left: 9px solid transparent; border-right: 9px solid transparent;
+            content: '';
+            position: absolute;
+            margin-left: -9px;
+            left: 50%;
+            bottom: -10px;
+            border-top: 10px solid #ff9bc0;
+            border-left: 9px solid transparent;
+            border-right: 9px solid transparent;
         }
 
         @media (max-width: 900px) {
             body, html { overflow: auto; }
-            .container { flex-direction: column; height: auto; min-height: 100vh; }
-            #menu_wrap { width: 100%; min-height: 560px; }
+            .container {
+                grid-template-columns: 1fr;
+                height: auto;
+                min-height: 100vh;
+            }
+            #menu_wrap { min-height: 560px; }
             #map { min-height: 430px; }
         }
     </style>
@@ -237,25 +313,24 @@
         <div class="theme_panel">
             <div class="theme_row">
                 <select id="themeSelect"></select>
-                <form onsubmit="searchPlaces(); return false;" class="search_box">
-                    <input type="text" value="김포시" id="keyword" placeholder="지역을 입력해줘! 예: 김포시">
-                    <button type="submit">찾기</button>
-                </form>
+                <input type="text" value="김포시" id="keyword" placeholder="지역 입력 예: 김포시">
+                <button type="button" onclick="searchPlaces()">찾기</button>
             </div>
             <div class="add_theme_box">
                 <input type="text" id="customThemeInput" placeholder="나만의 테마 추가 예: 청소년센터">
                 <button type="button" onclick="addCustomTheme()">추가</button>
             </div>
-            <div class="theme_hint">예: 테마를 ‘도서관’으로 고르고 ‘김포시’를 입력하면 김포시 도서관을 검색해요.</div>
+            <div class="theme_hint">예: 테마 ‘도서관’ + 지역 ‘김포시’ → 김포시 도서관만 검색</div>
         </div>
 
-        <div class="section_title">검색 결과 <span class="mini_note">장소 클릭 → 지도 보기</span></div>
+        <div class="section_title">검색 결과 <span class="mini_note">클릭하면 지도 이동</span></div>
         <ul id="placesList"></ul>
         <div class="empty_hint">지도 말풍선을 클릭하면 찜한 장소에 저장돼요 ˙ᵕ˙</div>
 
-        <div class="section_title">💗 찜한 장소 <span class="mini_note">클릭하면 다시 이동!</span></div>
+        <div class="section_title">💗 찜한 장소 <span class="mini_note">클릭하면 다시 이동</span></div>
         <ul id="favoriteList"></ul>
     </div>
+
     <div id="map"></div>
 </div>
 
@@ -266,17 +341,23 @@ var markers = [];
 var overlays = [];
 var favoritePlaces = JSON.parse(localStorage.getItem('favoritePlaces')) || [];
 var customThemes = JSON.parse(localStorage.getItem('customThemes')) || [];
-
 var defaultThemes = ['전체', '도서관', '카페', '박물관', '미술관', '공원', '학교', '병원', '약국', '주민센터', '청소년센터', '체육관', '공연장', '서점'];
 
-var mapContainer = document.getElementById('map'),
-    mapOption = { center: new kakao.maps.LatLng(37.66, 126.83), level: 4 };
-
+var mapContainer = document.getElementById('map');
+var mapOption = { center: new kakao.maps.LatLng(37.66, 126.83), level: 4 };
 var map = new kakao.maps.Map(mapContainer, mapOption);
 var ps = new kakao.maps.services.Places();
 
 renderThemeOptions();
 renderFavorites();
+
+document.getElementById('keyword').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') searchPlaces();
+});
+
+document.getElementById('customThemeInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') addCustomTheme();
+});
 
 function renderThemeOptions() {
     var themeSelect = document.getElementById('themeSelect');
@@ -295,6 +376,8 @@ function renderThemeOptions() {
         option.textContent = uniqueThemes[j];
         themeSelect.appendChild(option);
     }
+
+    themeSelect.value = '도서관';
 }
 
 function addCustomTheme() {
@@ -326,14 +409,14 @@ function searchPlaces() {
 
     if (!region) {
         alert('지역을 입력해줘! 예: 김포시, 고양시, 서울 강남구');
-        return false;
+        return;
     }
 
     var searchKeyword = theme === '전체' ? region : region + ' ' + theme;
     ps.keywordSearch(searchKeyword, placesSearchCB);
 }
 
-function placesSearchCB(data, status, pagination) {
+function placesSearchCB(data, status) {
     if (status === kakao.maps.services.Status.OK) {
         displayPlaces(data);
     } else {
@@ -342,17 +425,17 @@ function placesSearchCB(data, status, pagination) {
 }
 
 function displayPlaces(places) {
-    var listEl = document.getElementById('placesList'),
-        bounds = new kakao.maps.LatLngBounds();
+    var listEl = document.getElementById('placesList');
+    var bounds = new kakao.maps.LatLngBounds();
 
     listEl.innerHTML = '';
     removeMarker();
 
-    var imageSrc = 'https://cdn-icons-png.flaticon.com/512/1077/1077163.png',
-        imageSize = new kakao.maps.Size(42, 42),
-        markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+    var imageSrc = 'https://cdn-icons-png.flaticon.com/512/1077/1077163.png';
+    var imageSize = new kakao.maps.Size(42, 42);
+    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
 
-    for (var i=0; i<places.length; i++) {
+    for (var i = 0; i < places.length; i++) {
         var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x);
 
         var marker = new kakao.maps.Marker({ position: placePosition, image: markerImage });
@@ -368,6 +451,7 @@ function displayPlaces(places) {
         };
 
         var overlay = createOverlay(placeData, placePosition, true);
+        overlays.push(overlay);
         bounds.extend(placePosition);
 
         var itemEl = document.createElement('li');
@@ -377,15 +461,14 @@ function displayPlaces(places) {
             itemEl.onclick = function() {
                 showOverlay(o, p, place, true);
             };
-
             kakao.maps.event.addListener(m, 'click', function() {
                 showOverlay(o, p, place, true);
             });
         })(marker, overlay, placePosition, placeData);
 
-        overlays.push(overlay);
         listEl.appendChild(itemEl);
     }
+
     map.setBounds(bounds);
 }
 
@@ -402,7 +485,9 @@ function showOverlay(overlay, position, place, canFavorite) {
 
     setTimeout(function() {
         var overlayEl = document.querySelector('.customoverlay');
-        if (overlayEl && canFavorite) overlayEl.onclick = function() { addFavorite(place); };
+        if (overlayEl && canFavorite) {
+            overlayEl.onclick = function() { addFavorite(place); };
+        }
     }, 0);
 }
 
@@ -470,9 +555,9 @@ function moveToFavoritePlace(place) {
     map.panTo(position);
     map.setLevel(3);
 
-    var imageSrc = 'https://cdn-icons-png.flaticon.com/512/1077/1077163.png',
-        imageSize = new kakao.maps.Size(42, 42),
-        markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+    var imageSrc = 'https://cdn-icons-png.flaticon.com/512/1077/1077163.png';
+    var imageSize = new kakao.maps.Size(42, 42);
+    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
 
     var marker = new kakao.maps.Marker({ position: position, image: markerImage });
     marker.setMap(map);
