@@ -1,583 +1,364 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Map</title>
-    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Jua&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; }
-
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            font-family: 'Gaegu', cursive;
-            background:
-                radial-gradient(circle at 8% 12%, rgba(255, 206, 226, 0.75) 0 70px, transparent 72px),
-                radial-gradient(circle at 92% 18%, rgba(255, 236, 158, 0.75) 0 95px, transparent 97px),
-                radial-gradient(circle at 15% 90%, rgba(189, 231, 255, 0.75) 0 90px, transparent 92px),
-                linear-gradient(135deg, #fff7dd 0%, #fff1f8 45%, #eaf7ff 100%);
-            overflow: hidden;
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: 410px 1fr;
-            width: 100%;
-            height: 100vh;
-            padding: 18px;
-            gap: 18px;
-        }
-
-        #menu_wrap {
-            padding: 22px;
-            background: rgba(255, 255, 255, 0.88);
-            border: 3px solid rgba(255, 255, 255, 0.95);
-            border-radius: 34px;
-            box-shadow: 0 18px 38px rgba(255, 162, 189, 0.24), 0 8px 18px rgba(108, 86, 64, 0.08);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            backdrop-filter: blur(12px);
-        }
-
-        .title_box {
-            text-align: center;
-            margin-bottom: 14px;
-        }
-
-        h2 {
-            font-family: 'Jua', sans-serif;
-            font-size: 2rem;
-            color: #ff7aa8;
-            margin: 0;
-            text-shadow: 0 3px 0 #fff0a8;
-        }
-
-        .subtitle {
-            margin-top: 7px;
-            color: #9b8a7d;
-            font-size: 1.08rem;
-        }
-
-        .theme_panel {
-            padding: 13px;
-            border-radius: 24px;
-            background: rgba(255, 249, 219, 0.9);
-            border: 2px dashed #ffc4d8;
-            margin-bottom: 12px;
-        }
-
-        .theme_row, .add_theme_box {
-            display: flex;
-            gap: 8px;
-        }
-
-        .add_theme_box {
-            margin-top: 9px;
-        }
-
-        select, input {
-            min-width: 0;
-            padding: 12px 13px;
-            border: 0;
-            border-radius: 17px;
-            outline: none;
-            font-family: 'Gaegu', cursive;
-            font-size: 1.14rem;
-            color: #6f5a4a;
-            background: #ffffff;
-            box-shadow: inset 0 2px 7px rgba(255, 191, 213, 0.2);
-        }
-
-        select { width: 42%; cursor: pointer; }
-        input { flex: 1; }
-
-        button {
-            padding: 10px 16px;
-            cursor: pointer;
-            background: linear-gradient(135deg, #ff86b5, #ffb35c);
-            border: none;
-            border-radius: 17px;
-            color: white;
-            font-family: 'Jua', sans-serif;
-            font-size: 1.02rem;
-            box-shadow: 0 7px 0 #e86f8f, 0 12px 18px rgba(255, 127, 172, 0.22);
-            white-space: nowrap;
-        }
-
-        button:active {
-            transform: translateY(4px);
-            box-shadow: 0 3px 0 #e86f8f;
-        }
-
-        .add_theme_box button {
-            background: linear-gradient(135deg, #8fcfff, #b99cff);
-            box-shadow: 0 7px 0 #7d91de;
-        }
-
-        .theme_hint {
-            color: #a7958d;
-            font-size: 0.95rem;
-            line-height: 1.25;
-            margin-top: 8px;
-        }
-
-        .section_title {
-            display: flex;
-            justify-content: space-between;
-            margin: 9px 2px;
-            color: #f26b9b;
-            font-family: 'Jua', sans-serif;
-            font-size: 1.18rem;
-        }
-
-        .mini_note {
-            font-family: 'Gaegu', cursive;
-            color: #a7958d;
-            font-size: 0.96rem;
-        }
-
-        #placesList, #favoriteList {
-            list-style: none;
-            padding: 3px 2px 2px;
-            margin: 0;
-            overflow-y: auto;
-        }
-
-        #placesList { flex: 1.05; min-height: 150px; }
-        #favoriteList { flex: 0.85; min-height: 120px; }
-
-        #placesList li, #favoriteList li {
-            padding: 15px 16px 14px 18px;
-            background: linear-gradient(135deg, #ffffff 0%, #fff9fb 100%);
-            margin-bottom: 13px;
-            border-radius: 24px;
-            border: 2px solid #ffe4ec;
-            box-shadow: 0 9px 18px rgba(255, 176, 203, 0.14);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        #placesList li:hover, #favoriteList li:hover {
-            background: linear-gradient(135deg, #fff7bd 0%, #ffe4ef 100%);
-            transform: translateY(-3px) scale(1.015);
-            border-color: #ffc0d6;
-        }
-
-        #placesList li::before {
-            content: '📍';
-            position: absolute;
-            right: 15px;
-            top: 12px;
-            font-size: 1.3rem;
-        }
-
-        #favoriteList li::before {
-            content: '💗';
-            position: absolute;
-            right: 15px;
-            top: 12px;
-            font-size: 1.25rem;
-        }
-
-        #placesList li strong, #favoriteList li strong {
-            color: #f26b9b;
-            font-size: 1.28rem;
-            display: block;
-            padding-right: 30px;
-            font-family: 'Jua', sans-serif;
-            font-weight: 400;
-        }
-
-        #placesList li span, #favoriteList li span {
-            color: #8f8a85;
-            font-size: 1rem;
-            display: block;
-            margin-top: 5px;
-        }
-
-        .favorite_actions {
-            display: flex;
-            gap: 7px;
-            margin-top: 9px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .small_badge, .delete_btn {
-            display: inline-block;
-            padding: 4px 9px;
-            border-radius: 999px;
-            font-size: 0.95rem;
-            border: 1px solid #ffc7da;
-        }
-
-        .small_badge {
-            background: #fff0f5;
-            color: #e65b8b;
-        }
-
-        .delete_btn {
-            background: #fff;
-            color: #9b8a7d;
-            cursor: pointer;
-        }
-
-        .delete_btn:hover {
-            background: #ffe1eb;
-            color: #e65b8b;
-        }
-
-        .empty_hint {
-            padding: 12px;
-            text-align: center;
-            color: #b59a8d;
-            background: rgba(255, 255, 255, 0.55);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 196, 216, 0.55);
-            font-size: 1.02rem;
-            margin: 2px 0 12px;
-        }
-
-        #map {
-            width: 100%;
-            height: 100%;
-            border-radius: 34px;
-            border: 8px solid rgba(255, 255, 255, 0.96);
-            box-shadow: 0 18px 38px rgba(108, 86, 64, 0.13), 0 8px 20px rgba(255, 159, 196, 0.18);
-            overflow: hidden;
-        }
-
-        .customoverlay {
-            position: relative;
-            bottom: 58px;
-            border-radius: 20px;
-            border: 2px solid #ff9bc0;
-            background: #fff;
-            padding: 8px 13px 7px;
-            font-size: 15px;
-            font-family: 'Jua', sans-serif;
-            color: #f05f96;
-            box-shadow: 0 8px 17px rgba(255, 138, 181, 0.22);
-            white-space: nowrap;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .customoverlay::before {
-            content: '♡';
-            margin-right: 5px;
-            color: #ffb84d;
-        }
-
-        .customoverlay:hover {
-            background: #fff4ba;
-        }
-
-        .customoverlay:after {
-            content: '';
-            position: absolute;
-            margin-left: -9px;
-            left: 50%;
-            bottom: -10px;
-            border-top: 10px solid #ff9bc0;
-            border-left: 9px solid transparent;
-            border-right: 9px solid transparent;
-        }
-
-        @media (max-width: 900px) {
-            body, html { overflow: auto; }
-            .container {
-                grid-template-columns: 1fr;
-                height: auto;
-                min-height: 100vh;
-            }
-            #menu_wrap { min-height: 560px; }
-            #map { min-height: 430px; }
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>휴 지도</title>
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Jua&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body, html {
+      margin: 0; padding: 0; width: 100%; height: 100%;
+      font-family: 'Gaegu', cursive;
+      background:
+        radial-gradient(circle at 8% 12%, rgba(213,235,255,.78) 0 80px, transparent 82px),
+        radial-gradient(circle at 92% 18%, rgba(231,218,255,.72) 0 95px, transparent 97px),
+        radial-gradient(circle at 15% 90%, rgba(214,245,219,.72) 0 90px, transparent 92px),
+        linear-gradient(135deg, #f7fbff 0%, #fff7fb 48%, #f5fff4 100%);
+      overflow: hidden;
+    }
+    .container { display: grid; grid-template-columns: 420px 1fr; width: 100%; height: 100vh; padding: 18px; gap: 18px; }
+    #menu_wrap {
+      padding: 22px; background: rgba(255,255,255,.9); border: 3px solid rgba(255,255,255,.96); border-radius: 34px;
+      box-shadow: 0 18px 38px rgba(142,160,210,.2), 0 8px 18px rgba(108,86,64,.08);
+      display: flex; flex-direction: column; overflow: hidden; backdrop-filter: blur(12px);
+    }
+    .title_box { text-align: center; margin-bottom: 14px; }
+    h2 { font-family: 'Jua', sans-serif; font-size: 2.15rem; color: #6f8ff4; margin: 0; text-shadow: 0 3px 0 #e8f2ff; }
+    .subtitle { margin-top: 7px; color: #8a8f9d; font-size: 1.08rem; }
+    .theme_panel { padding: 13px; border-radius: 24px; background: rgba(246,250,255,.95); border: 2px dashed #bcd7ff; margin-bottom: 12px; }
+    .theme_row, .add_theme_box { display: flex; gap: 8px; }
+    .add_theme_box { margin-top: 9px; }
+    select, input {
+      min-width: 0; padding: 12px 13px; border: 0; border-radius: 17px; outline: none;
+      font-family: 'Gaegu', cursive; font-size: 1.14rem; color: #5f6170; background: #fff;
+      box-shadow: inset 0 2px 7px rgba(130,160,220,.16);
+    }
+    select { width: 42%; cursor: pointer; } input { flex: 1; }
+    button {
+      padding: 10px 16px; cursor: pointer; background: linear-gradient(135deg, #81a7ff, #ad8cff);
+      border: none; border-radius: 17px; color: white; font-family: 'Jua', sans-serif; font-size: 1.02rem;
+      box-shadow: 0 7px 0 #6d7ee0, 0 12px 18px rgba(127,149,255,.2); white-space: nowrap;
+    }
+    button:active { transform: translateY(4px); box-shadow: 0 3px 0 #6d7ee0; }
+    .add_theme_box button { background: linear-gradient(135deg, #84d6c7, #91b7ff); box-shadow: 0 7px 0 #6fadc2; }
+    .theme_hint { color: #9094a3; font-size: .95rem; line-height: 1.25; margin-top: 8px; }
+    #debugStatus { color: #5e6fe7; font-weight: 700; }
+    .quick_tabs { display: flex; gap: 7px; flex-wrap: wrap; margin: 10px 0 4px; }
+    .quick_tabs button { padding: 7px 10px; border-radius: 999px; font-size: .92rem; background: #fff; color: #6872ba; border: 1px solid #dfe7ff; box-shadow: none; }
+    .quick_tabs button.active { background: #eaf1ff; color: #5e6fe7; border-color: #9fb8ff; }
+    .section_title { display: flex; justify-content: space-between; margin: 9px 2px; color: #6f8ff4; font-family: 'Jua', sans-serif; font-size: 1.18rem; }
+    .mini_note { font-family: 'Gaegu', cursive; color: #9da1ad; font-size: .96rem; }
+    #placesList, #favoriteList { list-style: none; padding: 3px 2px 2px; margin: 0; overflow-y: auto; }
+    #placesList { flex: 1.05; min-height: 150px; } #favoriteList { flex: .75; min-height: 105px; }
+    #placesList li, #favoriteList li {
+      padding: 15px 16px 14px 18px; background: linear-gradient(135deg, #fff 0%, #f9fbff 100%); margin-bottom: 13px;
+      border-radius: 24px; border: 2px solid #e6eeff; box-shadow: 0 9px 18px rgba(120,150,210,.12); cursor: pointer; position: relative; overflow: hidden;
+    }
+    #placesList li:hover, #favoriteList li:hover { background: linear-gradient(135deg, #f4fff7 0%, #eef4ff 100%); transform: translateY(-3px) scale(1.015); border-color: #bdd3ff; }
+    #placesList li::before { content: '📍'; position: absolute; right: 15px; top: 12px; font-size: 1.3rem; }
+    #favoriteList li::before { content: '💗'; position: absolute; right: 15px; top: 12px; font-size: 1.25rem; }
+    #placesList li strong, #favoriteList li strong { color: #5d72e7; font-size: 1.25rem; display: block; padding-right: 30px; font-family: 'Jua', sans-serif; font-weight: 400; }
+    #placesList li span, #favoriteList li span { color: #8f929c; font-size: 1rem; display: block; margin-top: 5px; }
+    .category_badge { display: inline-block; margin-top: 7px; padding: 3px 9px; border-radius: 999px; background: #eef4ff; color: #6076dd; border: 1px solid #d7e3ff; font-size: .92rem; }
+    .favorite_actions { display: flex; gap: 7px; margin-top: 9px; position: relative; z-index: 2; }
+    .small_badge, .delete_btn { display: inline-block; padding: 4px 9px; border-radius: 999px; font-size: .95rem; border: 1px solid #cbdcff; }
+    .small_badge { background: #eef4ff; color: #5e6fe7; } .delete_btn { background: #fff; color: #8a8f9d; cursor: pointer; }
+    .delete_btn:hover { background: #f1f5ff; color: #5e6fe7; }
+    .empty_hint { padding: 12px; text-align: center; color: #9a9eaa; background: rgba(255,255,255,.58); border-radius: 20px; border: 1px solid rgba(188,215,255,.7); font-size: 1.02rem; margin: 2px 0 12px; }
+    #map { width: 100%; height: 100%; border-radius: 34px; border: 8px solid rgba(255,255,255,.96); box-shadow: 0 18px 38px rgba(108,86,64,.13), 0 8px 20px rgba(127,149,255,.16); overflow: hidden; }
+    .customoverlay { position: relative; bottom: 58px; border-radius: 20px; border: 2px solid #94b2ff; background: #fff; padding: 8px 13px 7px; font-size: 15px; font-family: 'Jua', sans-serif; color: #5e6fe7; box-shadow: 0 8px 17px rgba(126,160,255,.24); white-space: nowrap; cursor: pointer; user-select: none; }
+    .customoverlay::before { content: '♡'; margin-right: 5px; color: #8bd48b; }
+    .customoverlay:hover { background: #f2f7ff; }
+    .customoverlay:after { content: ''; position: absolute; margin-left: -9px; left: 50%; bottom: -10px; border-top: 10px solid #94b2ff; border-left: 9px solid transparent; border-right: 9px solid transparent; }
+    @media (max-width: 900px) { body, html { overflow: auto; } .container { grid-template-columns: 1fr; height: auto; min-height: 100vh; } #menu_wrap { min-height: 560px; } #map { min-height: 430px; } }
+  </style>
 </head>
 <body>
-
 <div class="container">
-    <div id="menu_wrap">
-        <div class="title_box">
-            <h2>🐾 몽글몽글 검색</h2>
-            <div class="subtitle">테마와 지역을 골라 장소를 찾아봐요!</div>
-        </div>
-
-        <div class="theme_panel">
-            <div class="theme_row">
-                <select id="themeSelect"></select>
-                <input type="text" value="김포시" id="keyword" placeholder="지역 입력 예: 김포시">
-                <button type="button" onclick="searchPlaces()">찾기</button>
-            </div>
-            <div class="add_theme_box">
-                <input type="text" id="customThemeInput" placeholder="나만의 테마 추가 예: 청소년센터">
-                <button type="button" onclick="addCustomTheme()">추가</button>
-            </div>
-            <div class="theme_hint">예: 테마 ‘도서관’ + 지역 ‘김포시’ → 김포시 도서관만 검색</div>
-        </div>
-
-        <div class="section_title">검색 결과 <span class="mini_note">클릭하면 지도 이동</span></div>
-        <ul id="placesList"></ul>
-        <div class="empty_hint">지도 말풍선을 클릭하면 찜한 장소에 저장돼요 ˙ᵕ˙</div>
-
-        <div class="section_title">💗 찜한 장소 <span class="mini_note">클릭하면 다시 이동</span></div>
-        <ul id="favoriteList"></ul>
+  <div id="menu_wrap">
+    <div class="title_box">
+      <h2>☁️ 휴 지도</h2>
+      <div class="subtitle">지역과 힐링 테마를 골라 마음이 쉬는 장소를 찾아봐요</div>
     </div>
-
-    <div id="map"></div>
+    <div class="theme_panel">
+      <div class="theme_row">
+        <select id="themeSelect"></select>
+        <input type="text" value="서울 종로구" id="keyword" placeholder="지역 입력 예: 김포시, 성수동, 강릉">
+        <button type="button" onclick="searchPlaces()">추천</button>
+      </div>
+      <div class="quick_tabs" id="quickTabs"></div>
+      <div class="add_theme_box">
+        <input type="text" id="customThemeInput" placeholder="나만의 테마 추가 예: 북카페, 수목원">
+        <button type="button" onclick="addCustomTheme()">추가</button>
+      </div>
+      <div class="theme_hint">예: 테마 ‘문화 힐링’ + 지역 ‘종로구’ → 종로구 미술관·박물관·공연장 검색<br><b id="debugStatus">상태: 준비 중</b></div>
+    </div>
+    <div class="section_title">검색 결과 <span class="mini_note">클릭하면 지도 이동</span></div>
+    <ul id="placesList"></ul>
+    <div class="empty_hint">지도 말풍선을 클릭하면 찜한 장소에 저장돼요 ˙ᵕ˙</div>
+    <div class="section_title">💗 내 힐링 리스트 <span class="mini_note">클릭하면 다시 이동</span></div>
+    <ul id="favoriteList"></ul>
+  </div>
+  <div id="map"></div>
 </div>
 
 <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=812e888a788f00bb238aabf1e311cc38&libraries=services"></script>
-
 <script>
 var markers = [];
 var overlays = [];
-var favoritePlaces = JSON.parse(localStorage.getItem('favoritePlaces')) || [];
-var customThemes = JSON.parse(localStorage.getItem('customThemes')) || [];
-var defaultThemes = ['전체', '도서관', '카페', '박물관', '미술관', '공원', '학교', '병원', '약국', '주민센터', '청소년센터', '체육관', '공연장', '서점'];
+var favoritePlaces = JSON.parse(localStorage.getItem('hueFavoritePlaces')) || [];
+var customThemes = JSON.parse(localStorage.getItem('hueCustomThemes')) || [];
+var themes = [
+  { name: '전체', keywords: ['힐링 명소', '가볼만한곳', '관광명소'] },
+  { name: '자연 속 힐링', keywords: ['공원', '수목원', '산책로', '숲'] },
+  { name: '문화 힐링', keywords: ['미술관', '박물관', '전시관', '공연장', '문화센터'] },
+  { name: '감성 카페', keywords: ['카페', '북카페', '디저트 카페'] },
+  { name: '뷰 맛집', keywords: ['전망대', '야경', '호수', '바다', '전망 좋은 카페'] },
+  { name: '조용한 공간', keywords: ['도서관', '서점', '기념관', '역사관'] },
+  { name: '마음 챙김', keywords: ['사찰', '성당', '명상', '숲길'] },
+  { name: '관광명소', keywords: ['관광명소', '가볼만한곳', '명소'] }
+];
 
 var mapContainer = document.getElementById('map');
-var mapOption = { center: new kakao.maps.LatLng(37.66, 126.83), level: 4 };
+var mapOption = { center: new kakao.maps.LatLng(37.5665, 126.9780), level: 5 };
 var map = new kakao.maps.Map(mapContainer, mapOption);
 var ps = new kakao.maps.services.Places();
 
 renderThemeOptions();
+renderQuickTabs();
 renderFavorites();
+setDebug('카카오맵 로드 완료. 지역을 입력하고 추천을 눌러봐요.');
 
-document.getElementById('keyword').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') searchPlaces();
-});
-
-document.getElementById('customThemeInput').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') addCustomTheme();
-});
+window.addEventListener('resize', function() { map.relayout(); });
+document.getElementById('keyword').addEventListener('keydown', function(e) { if (e.key === 'Enter') searchPlaces(); });
+document.getElementById('customThemeInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') addCustomTheme(); });
+document.getElementById('themeSelect').addEventListener('change', function() { updateActiveQuickTab(); searchPlaces(); });
 
 function renderThemeOptions() {
-    var themeSelect = document.getElementById('themeSelect');
-    themeSelect.innerHTML = '';
+  var themeSelect = document.getElementById('themeSelect');
+  themeSelect.innerHTML = '';
+  var names = themes.map(function(t) { return t.name; }).concat(customThemes);
+  var uniqueNames = [];
+  for (var i = 0; i < names.length; i++) if (uniqueNames.indexOf(names[i]) === -1) uniqueNames.push(names[i]);
+  for (var j = 0; j < uniqueNames.length; j++) {
+    var option = document.createElement('option');
+    option.value = uniqueNames[j];
+    option.textContent = uniqueNames[j];
+    themeSelect.appendChild(option);
+  }
+  themeSelect.value = '문화 힐링';
+}
 
-    var allThemes = defaultThemes.concat(customThemes);
-    var uniqueThemes = [];
+function renderQuickTabs() {
+  var box = document.getElementById('quickTabs');
+  box.innerHTML = '';
+  themes.forEach(function(theme) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = theme.name;
+    btn.onclick = function() {
+      document.getElementById('themeSelect').value = theme.name;
+      updateActiveQuickTab();
+      searchPlaces();
+    };
+    box.appendChild(btn);
+  });
+  updateActiveQuickTab();
+}
 
-    for (var i = 0; i < allThemes.length; i++) {
-        if (uniqueThemes.indexOf(allThemes[i]) === -1) uniqueThemes.push(allThemes[i]);
-    }
-
-    for (var j = 0; j < uniqueThemes.length; j++) {
-        var option = document.createElement('option');
-        option.value = uniqueThemes[j];
-        option.textContent = uniqueThemes[j];
-        themeSelect.appendChild(option);
-    }
-
-    themeSelect.value = '도서관';
+function updateActiveQuickTab() {
+  var selected = document.getElementById('themeSelect').value;
+  var buttons = document.querySelectorAll('#quickTabs button');
+  for (var i = 0; i < buttons.length; i++) buttons[i].classList.toggle('active', buttons[i].textContent === selected);
 }
 
 function addCustomTheme() {
-    var input = document.getElementById('customThemeInput');
-    var newTheme = input.value.trim();
+  var input = document.getElementById('customThemeInput');
+  var newTheme = input.value.trim();
+  if (!newTheme) { alert('추가할 테마 이름을 입력해줘!'); return; }
+  var existsInDefault = themes.some(function(t) { return t.name === newTheme; });
+  if (existsInDefault || customThemes.indexOf(newTheme) !== -1) { alert('이미 있는 테마예요!'); input.value = ''; return; }
+  customThemes.push(newTheme);
+  localStorage.setItem('hueCustomThemes', JSON.stringify(customThemes));
+  input.value = '';
+  renderThemeOptions();
+  document.getElementById('themeSelect').value = newTheme;
+  alert('새 테마를 추가했어요! ✨');
+}
 
-    if (!newTheme) {
-        alert('추가할 테마 이름을 입력해줘!');
-        return;
-    }
-
-    if (defaultThemes.indexOf(newTheme) !== -1 || customThemes.indexOf(newTheme) !== -1) {
-        alert('이미 있는 테마예요!');
-        input.value = '';
-        return;
-    }
-
-    customThemes.push(newTheme);
-    localStorage.setItem('customThemes', JSON.stringify(customThemes));
-    input.value = '';
-    renderThemeOptions();
-    document.getElementById('themeSelect').value = newTheme;
-    alert('새 테마를 추가했어요! ✨');
+function getSelectedTheme() {
+  var selectedName = document.getElementById('themeSelect').value;
+  for (var i = 0; i < themes.length; i++) if (themes[i].name === selectedName) return themes[i];
+  return { name: selectedName, keywords: [selectedName] };
 }
 
 function searchPlaces() {
-    var region = document.getElementById('keyword').value.trim();
-    var theme = document.getElementById('themeSelect').value;
+  var region = document.getElementById('keyword').value.trim();
+  var theme = getSelectedTheme();
+  updateActiveQuickTab();
+  if (!region) { alert('지역을 입력해줘! 예: 김포시, 성수동, 서울 강남구'); return; }
 
-    if (!region) {
-        alert('지역을 입력해줘! 예: 김포시, 고양시, 서울 강남구');
-        return;
-    }
-
-    var searchKeyword = theme === '전체' ? region : region + ' ' + theme;
-    ps.keywordSearch(searchKeyword, placesSearchCB);
+  removeMarker();
+  document.getElementById('placesList').innerHTML = '<li><strong>검색 중이에요...</strong><span>잠시만 기다려줘요 ☁️</span></li>';
+  var queries = buildQueries(region, theme);
+  searchSequentially(queries, 0, theme);
 }
 
-function placesSearchCB(data, status) {
-    if (status === kakao.maps.services.Status.OK) {
-        displayPlaces(data);
+function buildQueries(region, theme) {
+  var queries = [];
+  var baseRegion = region.replace(/시$|군$|구$/g, '');
+  if (theme.name === '전체') {
+    queries.push(region);
+    queries.push(region + ' 가볼만한곳');
+    queries.push(region + ' 관광명소');
+  } else {
+    for (var i = 0; i < theme.keywords.length; i++) queries.push(region + ' ' + theme.keywords[i]);
+    if (baseRegion !== region) {
+      for (var j = 0; j < theme.keywords.length; j++) queries.push(baseRegion + ' ' + theme.keywords[j]);
+    }
+  }
+  return queries;
+}
+
+function searchSequentially(queries, index, theme) {
+  if (index >= queries.length) {
+    setDebug('모든 검색어 실패: ' + queries.join(' / '));
+    document.getElementById('placesList').innerHTML = '<li><strong>검색 결과가 없어요</strong><span>아래 안내를 확인해 주세요. API 키 도메인 제한이면 모든 검색이 실패합니다.</span></li>';
+    alert('검색 결과가 없어요. 상태 메시지가 계속 실패라면 API 키의 플랫폼 도메인 등록 문제일 가능성이 커요.');
+    return;
+  }
+  var query = queries[index];
+  setDebug('검색 중: ' + query);
+  ps.keywordSearch(query, function(data, status) {
+    if (status === kakao.maps.services.Status.OK && data && data.length > 0) {
+      setDebug('검색 성공: ' + query + ' / ' + data.length + '개');
+      displayPlaces(data, theme);
     } else {
-        alert('앗! 검색 결과가 없어 ㅠ_ㅠ 테마나 지역명을 조금 다르게 입력해봐!');
+      setDebug('실패: ' + query + ' / status=' + status);
+      searchSequentially(queries, index + 1, theme);
     }
+  });
 }
 
-function displayPlaces(places) {
-    var listEl = document.getElementById('placesList');
-    var bounds = new kakao.maps.LatLngBounds();
+function displayPlaces(places, theme) {
+  var listEl = document.getElementById('placesList');
+  var bounds = new kakao.maps.LatLngBounds();
+  listEl.innerHTML = '';
+  removeMarker();
 
-    listEl.innerHTML = '';
-    removeMarker();
+  var imageSrc = 'https://cdn-icons-png.flaticon.com/512/684/684908.png';
+  var imageSize = new kakao.maps.Size(40, 40);
+  var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
 
-    var imageSrc = 'https://cdn-icons-png.flaticon.com/512/1077/1077163.png';
-    var imageSize = new kakao.maps.Size(42, 42);
-    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
-
-    for (var i = 0; i < places.length; i++) {
-        var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x);
-
-        var marker = new kakao.maps.Marker({ position: placePosition, image: markerImage });
-        marker.setMap(map);
-        markers.push(marker);
-
-        var placeData = {
-            id: places[i].id,
-            place_name: places[i].place_name,
-            address_name: places[i].address_name,
-            x: places[i].x,
-            y: places[i].y
-        };
-
-        var overlay = createOverlay(placeData, placePosition, true);
-        overlays.push(overlay);
-        bounds.extend(placePosition);
-
-        var itemEl = document.createElement('li');
-        itemEl.innerHTML = '<strong>' + places[i].place_name + '</strong><span>' + places[i].address_name + '</span>';
-
-        (function(m, o, p, place) {
-            itemEl.onclick = function() {
-                showOverlay(o, p, place, true);
-            };
-            kakao.maps.event.addListener(m, 'click', function() {
-                showOverlay(o, p, place, true);
-            });
-        })(marker, overlay, placePosition, placeData);
-
-        listEl.appendChild(itemEl);
-    }
-
-    map.setBounds(bounds);
-}
-
-function createOverlay(place, position, canFavorite) {
-    var titleText = canFavorite ? '클릭해서 찜하기' : '찜한 장소';
-    var content = '<div class="customoverlay" title="' + titleText + '">' + place.place_name + '</div>';
-    return new kakao.maps.CustomOverlay({ content: content, position: position });
-}
-
-function showOverlay(overlay, position, place, canFavorite) {
-    closeAllOverlays();
-    overlay.setMap(map);
-    map.panTo(position);
-
-    setTimeout(function() {
-        var overlayEl = document.querySelector('.customoverlay');
-        if (overlayEl && canFavorite) {
-            overlayEl.onclick = function() { addFavorite(place); };
-        }
-    }, 0);
-}
-
-function addFavorite(place) {
-    var alreadyExists = favoritePlaces.some(function(item) {
-        return item.id === place.id || (item.place_name === place.place_name && item.address_name === place.address_name);
-    });
-
-    if (alreadyExists) {
-        alert('이미 찜한 장소예요 💗');
-        return;
-    }
-
-    favoritePlaces.push(place);
-    localStorage.setItem('favoritePlaces', JSON.stringify(favoritePlaces));
-    renderFavorites();
-    alert('찜한 장소에 추가했어요! 💕');
-}
-
-function renderFavorites() {
-    var favoriteList = document.getElementById('favoriteList');
-    favoriteList.innerHTML = '';
-
-    if (favoritePlaces.length === 0) {
-        var emptyEl = document.createElement('li');
-        emptyEl.innerHTML = '<strong>아직 찜한 장소가 없어요</strong><span>지도 말풍선을 눌러 저장해보세요!</span>';
-        emptyEl.style.cursor = 'default';
-        favoriteList.appendChild(emptyEl);
-        return;
-    }
-
-    for (var i = 0; i < favoritePlaces.length; i++) {
-        var place = favoritePlaces[i];
-        var itemEl = document.createElement('li');
-        itemEl.innerHTML =
-            '<strong>' + place.place_name + '</strong>' +
-            '<span>' + place.address_name + '</span>' +
-            '<div class="favorite_actions">' +
-            '<span class="small_badge">지도에서 보기</span>' +
-            '<span class="delete_btn">삭제</span>' +
-            '</div>';
-
-        (function(index, placeData, li) {
-            li.onclick = function() {
-                moveToFavoritePlace(placeData);
-            };
-
-            var deleteBtn = li.querySelector('.delete_btn');
-            deleteBtn.onclick = function(event) {
-                event.stopPropagation();
-                favoritePlaces.splice(index, 1);
-                localStorage.setItem('favoritePlaces', JSON.stringify(favoritePlaces));
-                renderFavorites();
-            };
-        })(i, place, itemEl);
-
-        favoriteList.appendChild(itemEl);
-    }
-}
-
-function moveToFavoritePlace(place) {
-    closeAllOverlays();
-
-    var position = new kakao.maps.LatLng(place.y, place.x);
-    map.panTo(position);
-    map.setLevel(3);
-
-    var imageSrc = 'https://cdn-icons-png.flaticon.com/512/1077/1077163.png';
-    var imageSize = new kakao.maps.Size(42, 42);
-    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
-
-    var marker = new kakao.maps.Marker({ position: position, image: markerImage });
+  for (var i = 0; i < places.length; i++) {
+    var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x);
+    var marker = new kakao.maps.Marker({ position: placePosition, image: markerImage });
     marker.setMap(map);
     markers.push(marker);
 
-    var overlay = createOverlay(place, position, false);
-    overlay.setMap(map);
+    var placeData = {
+      id: places[i].id || String(i),
+      place_name: places[i].place_name,
+      address_name: places[i].road_address_name || places[i].address_name || '',
+      category_name: places[i].category_name || theme.name,
+      phone: places[i].phone || '',
+      place_url: places[i].place_url || '',
+      x: places[i].x,
+      y: places[i].y
+    };
+
+    var overlay = createOverlay(placeData, placePosition, true);
     overlays.push(overlay);
+    bounds.extend(placePosition);
+
+    var itemEl = document.createElement('li');
+    itemEl.innerHTML = '<strong>' + escapeHtml(placeData.place_name) + '</strong><span>' + escapeHtml(placeData.address_name) + '</span><span class="category_badge">' + escapeHtml(placeData.category_name || theme.name) + '</span>';
+
+    (function(marker, overlay, position, place) {
+      itemEl.onclick = function() { showOverlay(overlay, position, place, true); };
+      kakao.maps.event.addListener(marker, 'click', function() { showOverlay(overlay, position, place, true); });
+    })(marker, overlay, placePosition, placeData);
+
+    listEl.appendChild(itemEl);
+  }
+  map.setBounds(bounds);
 }
 
-function closeAllOverlays() {
-    for (var i = 0; i < overlays.length; i++) overlays[i].setMap(null);
+function createOverlay(place, position, canFavorite) {
+  var titleText = canFavorite ? '클릭해서 찜하기' : '찜한 장소';
+  var content = '<div class="customoverlay" title="' + titleText + '">' + escapeHtml(place.place_name) + '</div>';
+  return new kakao.maps.CustomOverlay({ content: content, position: position });
 }
 
-function removeMarker() {
-    for (var i = 0; i < markers.length; i++) markers[i].setMap(null);
-    markers = [];
-    closeAllOverlays();
-    overlays = [];
+function showOverlay(overlay, position, place, canFavorite) {
+  closeAllOverlays();
+  overlay.setMap(map);
+  map.panTo(position);
+  setTimeout(function() {
+    var overlayEl = document.querySelector('.customoverlay');
+    if (overlayEl && canFavorite) overlayEl.onclick = function() { addFavorite(place); };
+  }, 0);
 }
+
+function addFavorite(place) {
+  var alreadyExists = favoritePlaces.some(function(item) { return item.id === place.id || (item.place_name === place.place_name && item.address_name === place.address_name); });
+  if (alreadyExists) { alert('이미 찜한 장소예요 💗'); return; }
+  favoritePlaces.push(place);
+  localStorage.setItem('hueFavoritePlaces', JSON.stringify(favoritePlaces));
+  renderFavorites();
+  alert('찜한 장소에 추가했어요! 💕');
+}
+
+function renderFavorites() {
+  var favoriteList = document.getElementById('favoriteList');
+  favoriteList.innerHTML = '';
+  if (favoritePlaces.length === 0) {
+    var emptyEl = document.createElement('li');
+    emptyEl.innerHTML = '<strong>아직 찜한 장소가 없어요</strong><span>지도 말풍선을 눌러 저장해보세요!</span>';
+    emptyEl.style.cursor = 'default';
+    favoriteList.appendChild(emptyEl);
+    return;
+  }
+  for (var i = 0; i < favoritePlaces.length; i++) {
+    var place = favoritePlaces[i];
+    var itemEl = document.createElement('li');
+    itemEl.innerHTML = '<strong>' + escapeHtml(place.place_name) + '</strong><span>' + escapeHtml(place.address_name) + '</span><div class="favorite_actions"><span class="small_badge">지도에서 보기</span><span class="delete_btn">삭제</span></div>';
+    (function(index, placeData, li) {
+      li.onclick = function() { moveToFavoritePlace(placeData); };
+      var deleteBtn = li.querySelector('.delete_btn');
+      deleteBtn.onclick = function(event) {
+        event.stopPropagation();
+        favoritePlaces.splice(index, 1);
+        localStorage.setItem('hueFavoritePlaces', JSON.stringify(favoritePlaces));
+        renderFavorites();
+      };
+    })(i, place, itemEl);
+    favoriteList.appendChild(itemEl);
+  }
+}
+
+function moveToFavoritePlace(place) {
+  closeAllOverlays();
+  var position = new kakao.maps.LatLng(place.y, place.x);
+  map.panTo(position);
+  map.setLevel(3);
+  var imageSrc = 'https://cdn-icons-png.flaticon.com/512/684/684908.png';
+  var imageSize = new kakao.maps.Size(40, 40);
+  var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+  var marker = new kakao.maps.Marker({ position: position, image: markerImage });
+  marker.setMap(map);
+  markers.push(marker);
+  var overlay = createOverlay(place, position, false);
+  overlay.setMap(map);
+  overlays.push(overlay);
+}
+
+function closeAllOverlays() { for (var i = 0; i < overlays.length; i++) overlays[i].setMap(null); }
+function removeMarker() { for (var i = 0; i < markers.length; i++) markers[i].setMap(null); markers = []; closeAllOverlays(); overlays = []; }
+function setDebug(text) { var el = document.getElementById('debugStatus'); if (el) el.textContent = '상태: ' + text; }
+function escapeHtml(text) { return String(text || '').replace(/[&<>'"]/g, function(ch) { return ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' })[ch]; }); }
+window.onerror = function(message, source, lineno) { setDebug('자바스크립트 오류: ' + message + ' / line ' + lineno); };
 </script>
 </body>
 </html>
