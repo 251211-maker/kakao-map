@@ -50,9 +50,9 @@
     .section_title { display: flex; justify-content: space-between; margin: 9px 2px; color: #6f8ff4; font-family: 'Jua', sans-serif; font-size: 1.18rem; }
     .mini_note { font-family: 'Gaegu', cursive; color: #9da1ad; font-size: .96rem; }
     #placesList, #favoriteList { list-style: none; padding: 3px 2px 2px; margin: 0; overflow-y: auto; }
-    #placesList { flex: 1.05; min-height: 150px; } #favoriteList { flex: .75; min-height: 105px; }
+    #placesList { flex: .78; min-height: 120px; } #favoriteList { flex: 1.25; min-height: 230px; }
     #placesList li, #favoriteList li {
-      padding: 15px 16px 14px 18px; background: linear-gradient(135deg, #fff 0%, #f9fbff 100%); margin-bottom: 13px;
+      padding: 13px 16px 12px 18px; background: linear-gradient(135deg, #fff 0%, #f9fbff 100%); margin-bottom: 13px;
       border-radius: 24px; border: 2px solid #e6eeff; box-shadow: 0 9px 18px rgba(120,150,210,.12); cursor: pointer; position: relative; overflow: hidden;
     }
     #placesList li:hover, #favoriteList li:hover { background: linear-gradient(135deg, #f4fff7 0%, #eef4ff 100%); transform: translateY(-3px) scale(1.015); border-color: #bdd3ff; }
@@ -97,7 +97,7 @@
     <div class="section_title">검색 결과 <span class="mini_note">클릭하면 지도 이동</span></div>
     <ul id="placesList"></ul>
     <div class="empty_hint">지도 말풍선을 클릭하면 찜한 장소에 저장돼요 ˙ᵕ˙</div>
-    <div class="section_title">💗 내 힐링 리스트 <span class="mini_note">클릭하면 다시 이동</span></div>
+    <div class="section_title">💗 내 힐링 리스트 <span class="mini_note">넓게 보기</span></div>
     <ul id="favoriteList"></ul>
   </div>
   <div id="map"></div>
@@ -362,3 +362,4 @@ window.onerror = function(message, source, lineno) { setDebug('자바스크립�
 </script>
 </body>
 </html>
+
