@@ -197,12 +197,19 @@ function renderThemeOptions() {
 function renderQuickTabs() {
   var box = document.getElementById('quickTabs');
   box.innerHTML = '';
-  themes.forEach(function(theme) {
+
+  var tabNames = themes.map(function(t) { return t.name; }).concat(customThemes);
+  var uniqueTabNames = [];
+  for (var i = 0; i < tabNames.length; i++) {
+    if (uniqueTabNames.indexOf(tabNames[i]) === -1) uniqueTabNames.push(tabNames[i]);
+  }
+
+  uniqueTabNames.forEach(function(name) {
     var btn = document.createElement('button');
     btn.type = 'button';
-    btn.textContent = theme.name;
+    btn.textContent = name;
     btn.onclick = function() {
-      document.getElementById('themeSelect').value = theme.name;
+      document.getElementById('themeSelect').value = name;
       updateActiveQuickTab();
       searchPlaces();
     };
@@ -220,15 +227,30 @@ function updateActiveQuickTab() {
 function addCustomTheme() {
   var input = document.getElementById('customThemeInput');
   var newTheme = input.value.trim();
-  if (!newTheme) { alert('추가할 테마 이름을 입력해줘!'); return; }
+
+  if (!newTheme) {
+    alert('추가할 테마 이름을 입력해줘!');
+    return;
+  }
+
   var existsInDefault = themes.some(function(t) { return t.name === newTheme; });
-  if (existsInDefault || customThemes.indexOf(newTheme) !== -1) { alert('이미 있는 테마예요!'); input.value = ''; return; }
+  var existsInCustom = customThemes.indexOf(newTheme) !== -1;
+  if (existsInDefault || existsInCustom) {
+    alert('이미 있는 테마예요!');
+    input.value = '';
+    return;
+  }
+
   customThemes.push(newTheme);
   localStorage.setItem('hueCustomThemes', JSON.stringify(customThemes));
   input.value = '';
+
   renderThemeOptions();
+  renderQuickTabs();
   document.getElementById('themeSelect').value = newTheme;
-  alert('새 테마를 추가했어요! ✨');
+  updateActiveQuickTab();
+  setDebug('새 테마 추가 완료: ' + newTheme);
+  alert('새 테마를 추가했어요! 이제 테마 목록에서 선택할 수 있어요 ✨');
 }
 
 function getSelectedTheme() {
